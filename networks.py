@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
 import tensorflow.keras as keras
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, MultiHeadAttention
 from config import *
 
 class CriticNetwork(keras.Model):
@@ -21,6 +21,7 @@ class CriticNetwork(keras.Model):
                     self.model_name+'_TD3')
 
         #OpenAI paper suggest two 128 hidden layers
+        self.attention = MultiHeadAttention(num_heads=NUM_HEADS, key_dim=ATTENTION_DIM)
         self.fc1 = Dense(self.critic_dense1, activation=CRITIC_ACTIVATION_HIDDEN)#, kernel_initializer=WEIGHT_INIT, bias_initializer=BIAS_INIT)
         self.fc2 = Dense(self.critic_dense2, activation=CRITIC_ACTIVATION_HIDDEN)#, kernel_initializer=WEIGHT_INIT, bias_initializer=BIAS_INIT)
         self.fc3 = Dense(self.critic_dense3, activation=CRITIC_ACTIVATION_HIDDEN)#, kernel_initializer=WEIGHT_INIT, bias_initializer=BIAS_INIT)
@@ -31,6 +32,8 @@ class CriticNetwork(keras.Model):
         Centralised Critic takes the all the states from each Agent and corresponding actions from each Agent and gives a Q value
         """
         state, action = inputs
+        if ATTENTION:
+            state = self.attention([state, state, state])
         q_network = self.fc1(tf.concat([state, action], axis=1))
         q_network = self.fc2(q_network)
         q_network = self.fc3(q_network)
@@ -58,7 +61,7 @@ class ActorNetwork(keras.Model):
         self.checkpoint_file = os.path.join(self.checkpoint_dir, 
                     self.model_name+'_TD3')
 
-
+        self.attention = MultiHeadAttention(num_heads=NUM_HEADS, key_dim=ATTENTION_DIM)
         self.fc1 = Dense(self.actors_dense1, activation=ACTORS_ACTIVATION_HIDDEN)#, kernel_initializer=WEIGHT_INIT, bias_initializer=BIAS_INIT)
         self.fc2 = Dense(self.actors_dense2, activation=ACTORS_ACTIVATION_HIDDEN)#, kernel_initializer=WEIGHT_INIT, bias_initializer=BIAS_INIT)
         self.fc3 = Dense(self.actors_dense3, activation=ACTORS_ACTIVATION_HIDDEN)#, kernel_initializer=WEIGHT_INIT, bias_initializer=BIAS_INIT)
@@ -69,6 +72,8 @@ class ActorNetwork(keras.Model):
         """
         Actor network takes the state of the agent and outputs continuous value for each action
         """
+        if ATTENTION:
+            state_goal = self.attention([state_goal, state_goal, state_goal])
         continuous_action_temp = self.fc1(state_goal)
         continuous_action_temp = self.fc2(continuous_action_temp)
         continuous_action_temp = self.fc3(continuous_action_temp)

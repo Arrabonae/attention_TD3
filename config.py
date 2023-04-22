@@ -50,3 +50,9 @@ THETA = 0.15
 SIGMA = 0.2
 DT = 1e-2
 X0 = None
+
+
+#Attention
+ATTENTION = True
+ATTENTION_DIM = 64
+NUM_HEADS = 4
