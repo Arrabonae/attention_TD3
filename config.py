@@ -53,6 +53,5 @@ X0 = None
 
 
 #Attention
-ATTENTION = True
 ATTENTION_DIM = 64
 NUM_HEADS = 4

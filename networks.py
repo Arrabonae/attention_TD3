@@ -32,8 +32,10 @@ class CriticNetwork(keras.Model):
         Centralised Critic takes the all the states from each Agent and corresponding actions from each Agent and gives a Q value
         """
         state, action = inputs
-        if ATTENTION:
-            state = self.attention([state, state, state])
+        # if ATTENTION:
+        state = tf.expand_dims(state, axis=1)
+        state = self.attention(state, state, state)
+        state = tf.squeeze(state, axis=1)
         q_network = self.fc1(tf.concat([state, action], axis=1))
         q_network = self.fc2(q_network)
         q_network = self.fc3(q_network)
@@ -72,8 +74,10 @@ class ActorNetwork(keras.Model):
         """
         Actor network takes the state of the agent and outputs continuous value for each action
         """
-        if ATTENTION:
-            state_goal = self.attention([state_goal, state_goal, state_goal])
+        # if ATTENTION:
+        state_goal = tf.expand_dims(state_goal, axis=1)
+        state_goal = self.attention(state_goal, state_goal, state_goal)
+        state_goal = tf.squeeze(state_goal, axis=1)
         continuous_action_temp = self.fc1(state_goal)
         continuous_action_temp = self.fc2(continuous_action_temp)
         continuous_action_temp = self.fc3(continuous_action_temp)
