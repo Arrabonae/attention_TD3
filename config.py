@@ -51,7 +51,6 @@ SIGMA = 0.2
 DT = 1e-2
 X0 = None
 
-
 #Attention
 ATTENTION_DIM = 64
 NUM_HEADS = 4

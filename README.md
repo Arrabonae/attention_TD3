@@ -1,5 +1,5 @@
 
-# Twin Delayed Deep Deterministic Policy Gradient with HER memory (TD3-HER)
+# Self-attention Twin Delayed Deep Deterministic Policy Gradient with HER memory (SA-TD3-HER)
 
 ## Panda Gym environment for sparse reward
 This repository is an example of Twin Delayed Deep Deterministic Policy Gradient architecture with hindsight experience replay memory. This implementation is fine-tuned for environment: **PandaReach-v3**. <br/>
@@ -22,15 +22,21 @@ More about the TD3 algorithm: https://arxiv.org/pdf/1802.09477.pdf<br/>
 Hindsight Experience Replay (HER) is a method for learning from sparse, delayed, and hard-to-interpret rewards. HER is a memory replay technique that can be used with any model-free RL algorithm. It works by storing trajectories that deviate from the goal, and then replaying them with the goal substituted by the achieved goal. This allows the agent to learn from suboptimal actions, and can be used to learn from sparse rewards. <br/>
 More about the HER algorithm: https://arxiv.org/pdf/1707.01495.pdf <br/>
 
+## Self-attention
+Self-attention is a mechanism that allows a network to focus on specific parts of the input. It is used in many different applications, including natural language processing, computer vision, and speech recognition. <br/>
+In this implementation, self-attention is used to learn the importance of each State in the trajectory. This improved the learning of the overall alrgorithm. <br/>
+More about self-attention: https://arxiv.org/pdf/1706.03762.pdf <br/>
+
 ## Network architecture
 ![](plots/TD3_HER.jpg)<br/>
 (Source: https://www.researchgate.net/figure/Structure-of-TD3-Twin-Delayed-Deep-Deterministic-Policy-Gradient-with-RAMDP_fig2_338605159)<br/>
 
 ## Results and benchmarks
 The network was trained for 10 epochs, and the results are shown below. <br/>
-![](plots/TD3_HER_score.png)<br/>
-![](plots/TD3_HER_actor.png)<br/>
-![](plots/TD3_HER_critics.png)<br/>
+![](plots/Comparison_self_attention_improvement.png)<br/>
+![](plots/SA_TD3_HER_score.png)<br/>
+![](plots/SA_TD3_HER_actor.png)<br/>
+![](plots/SA_TD3_HER_critics.png)<br/>
 
 
 ## Notable Hyperparameter
@@ -50,6 +56,8 @@ The network was trained for 10 epochs, and the results are shown below. <br/>
 - HER strategy: future
 - HER proportion: 4 (4 times more HER transitions than regular transitions)
 - Noise: Ornstein-Uhlenbeck process
+- Attention layers: 64
+- Attention heads: 4
 
 I used Leaky RELU activation functions for hidden layers with Tanh activation function for the output layer of the Actor network. The Critic network uses Leaky RELU activation functions for hidden layers with no activation function for the output layer. <br/>
 
@@ -66,3 +74,4 @@ This network was trained in docker container with the mcr.microsoft.com/devconta
 ## Links to research papers and other repositories
 TD3 algorithm: https://arxiv.org/pdf/1802.09477.pdf <br/>
 HER algorithm: https://arxiv.org/pdf/1707.01495.pdf <br/>
+Self-attention: https://arxiv.org/pdf/1706.03762.pdf <br/>
